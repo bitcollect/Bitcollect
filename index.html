@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BitCollect \u2014 Turn Your Spare Change Into Bitcoin</title>
+<title>BitCollect — Spend. Round Up. Stack Bitcoin.</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -16,356 +16,452 @@ html{scroll-behavior:smooth;}
   --card:rgba(255,255,255,0.04);
   --border:rgba(255,255,255,0.08);
   --text:#F0F0FA;
-  --muted:#8080AA;
+  --muted:#7070A0;
   --orange:#F7931A;
-  --green:#3DD68C;
 }
-body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--dark);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* NOISE TEXTURE OVERLAY */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.4;
+}
 
 /* NAV */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
-  padding:1rem 5%;
-  background:rgba(7,7,15,0.92);
-  backdrop-filter:blur(20px);
+  padding:1.1rem 5%;
+  background:rgba(7,7,15,0.8);
+  backdrop-filter:blur(24px);
   border-bottom:1px solid var(--border);
+  animation:slideDown 0.6s ease both;
 }
-.logo{display:flex;align-items:center;gap:0.6rem;font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;text-decoration:none;color:white;}
-.hex{width:32px;height:32px;background:var(--grad);clip-path:polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:900;flex-shrink:0;}
-.nav-cta{background:var(--grad);color:white;border:none;padding:0.6rem 1.3rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;white-space:nowrap;}
+@keyframes slideDown{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.nav-logo{
+  display:flex;align-items:center;gap:0.7rem;
+  font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;
+  text-decoration:none;color:white;
+}
+.hex{
+  width:34px;height:34px;
+  background:var(--grad);
+  clip-path:polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;font-weight:900;color:white;
+  flex-shrink:0;
+}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.9rem;transition:color 0.2s;}
+.nav-links a:hover{color:white;}
+.nav-right{display:flex;gap:0.8rem;align-items:center;}
+.btn-ghost{
+  color:var(--muted);background:none;border:none;
+  padding:0.5rem 1rem;border-radius:50px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:0.9rem;transition:color 0.2s;
+}
+.btn-ghost:hover{color:white;}
+.btn-pill{
+  background:var(--grad);color:white;border:none;
+  padding:0.6rem 1.4rem;border-radius:50px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;
+  transition:transform 0.2s,box-shadow 0.2s;
+  box-shadow:0 4px 20px rgba(107,63,212,0.4);
+}
+.btn-pill:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(107,63,212,0.5);}
 
 /* HERO */
 .hero{
   min-height:100vh;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:7rem 5% 4rem;
+  text-align:center;
+  padding:7rem 5% 4rem;
   position:relative;overflow:hidden;
 }
-.orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
-.orb1{width:500px;height:500px;background:rgba(107,63,212,0.2);top:-100px;left:-100px;animation:drift1 10s ease-in-out infinite;}
-.orb2{width:400px;height:400px;background:rgba(91,141,239,0.15);bottom:-80px;right:-80px;animation:drift2 10s ease-in-out infinite;}
-@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-20px)}}
-@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,30px)}}
 
-.hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto;}
-
-.hero-badge{
-  display:inline-flex;align-items:center;gap:0.5rem;
-  background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.25);
-  color:var(--orange);padding:0.4rem 1rem;border-radius:50px;
-  font-size:0.78rem;font-weight:600;margin-bottom:1.5rem;letter-spacing:0.03em;
+/* Animated gradient orbs */
+.orb{
+  position:absolute;border-radius:50%;filter:blur(80px);
+  pointer-events:none;animation:float 8s ease-in-out infinite;
 }
-.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:blink 1.5s infinite;}
+.orb1{width:600px;height:600px;background:rgba(107,63,212,0.18);top:-100px;left:-100px;animation-delay:0s;}
+.orb2{width:500px;height:500px;background:rgba(91,141,239,0.15);bottom:-100px;right:-100px;animation-delay:-4s;}
+.orb3{width:300px;height:300px;background:rgba(247,147,26,0.06);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-2s;}
+@keyframes float{
+  0%,100%{transform:translateY(0) scale(1);}
+  50%{transform:translateY(-30px) scale(1.05);}
+}
+.orb1{animation-name:float1;}
+.orb2{animation-name:float2;}
+@keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-20px)}}
+@keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,20px)}}
+
+.hero-inner{position:relative;z-index:1;}
+
+.badge{
+  display:inline-flex;align-items:center;gap:0.6rem;
+  background:rgba(91,141,239,0.08);
+  border:1px solid rgba(91,141,239,0.2);
+  color:var(--blue);padding:0.45rem 1.1rem;border-radius:50px;
+  font-size:0.8rem;font-weight:500;margin-bottom:2rem;
+  animation:fadeUp 0.7s 0.1s ease both;
+}
+.badge-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--blue);
+  animation:blink 1.5s ease-in-out infinite;
+}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
 
 h1{
   font-family:'Syne',sans-serif;
-  font-size:clamp(2.4rem,7vw,5.5rem);
-  font-weight:800;line-height:1.05;
+  font-size:clamp(3.2rem,8vw,6.5rem);
+  font-weight:800;line-height:1.02;
   letter-spacing:-0.02em;
-  margin-bottom:1.2rem;
+  animation:fadeUp 0.7s 0.2s ease both;
 }
-.grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.orange-text{color:var(--orange);}
-
+.h1-line2{
+  background:var(--grad);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  display:block;
+}
 .hero-sub{
-  font-size:clamp(0.95rem,2vw,1.15rem);
-  color:var(--muted);font-weight:400;
-  line-height:1.75;max-width:500px;margin:0 auto 2rem;
+  font-size:clamp(1rem,2vw,1.2rem);
+  color:var(--muted);font-weight:300;
+  max-width:520px;line-height:1.75;
+  margin:1.8rem auto 2.5rem;
+  animation:fadeUp 0.7s 0.3s ease both;
 }
-
-/* EMAIL FORM - HERO */
-.hero-form{
-  display:flex;gap:0.6rem;max-width:420px;margin:0 auto 1rem;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:50px;padding:0.35rem 0.35rem 0.35rem 1.2rem;
+.hero-actions{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+  animation:fadeUp 0.7s 0.4s ease both;
+  margin-bottom:4rem;
 }
-.hero-form input{
-  flex:1;background:none;border:none;outline:none;
-  color:white;font-family:'DM Sans',sans-serif;font-size:0.9rem;min-width:0;
+.btn-big{
+  padding:1rem 2.4rem;border-radius:50px;
+  font-size:1rem;font-weight:500;cursor:pointer;
+  transition:all 0.2s;font-family:'DM Sans',sans-serif;
 }
-.hero-form input::placeholder{color:var(--muted);}
-.hero-form button{
+.btn-big-primary{
   background:var(--grad);color:white;border:none;
-  padding:0.7rem 1.3rem;border-radius:50px;cursor:pointer;
-  font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;
-  white-space:nowrap;flex-shrink:0;
-  box-shadow:0 4px 20px rgba(107,63,212,0.4);
+  box-shadow:0 8px 32px rgba(107,63,212,0.45);
 }
-.hero-microcopy{font-size:0.75rem;color:var(--muted);}
-.success-msg{display:none;color:var(--green);font-size:0.9rem;padding:0.8rem;background:rgba(61,214,140,0.08);border:1px solid rgba(61,214,140,0.2);border-radius:12px;margin-top:0.5rem;}
+.btn-big-primary:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(107,63,212,0.55);}
+.btn-big-secondary{
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);color:white;
+}
+.btn-big-secondary:hover{background:rgba(255,255,255,0.08);}
 
-/* SOCIAL PROOF BAR */
-.proof-bar{
-  padding:1.2rem 5%;
-  background:rgba(255,255,255,0.02);
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  text-align:center;
-}
-.proof-bar p{font-size:0.82rem;color:var(--muted);}
-.proof-bar strong{color:var(--text);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
 /* PHONE MOCKUP */
-.phone-section{
-  padding:5rem 5%;
-  display:flex;flex-direction:column;align-items:center;
-  gap:3rem;
-  position:relative;
+.phone-wrap{
+  animation:fadeUp 0.7s 0.5s ease both;
+  position:relative;display:inline-block;
 }
-.phone-section-text{text-align:center;max-width:500px;}
-.phone-section-text h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:1rem;}
-.phone-section-text p{color:var(--muted);line-height:1.75;font-size:0.95rem;}
-
 .phone{
-  width:260px;flex-shrink:0;
+  width:280px;
   background:linear-gradient(145deg,#141428,#0E0E20);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:38px;padding:10px;
-  box-shadow:0 30px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:40px;
+  padding:12px;
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  margin:0 auto;
 }
 .phone-screen{
-  background:#080810;border-radius:30px;
-  overflow:hidden;padding:1.3rem 1rem;
+  background:var(--dark);
+  border-radius:30px;
+  overflow:hidden;
+  padding:1.5rem 1.2rem;
 }
-.ps-bar{display:flex;justify-content:space-between;font-size:0.6rem;color:var(--muted);margin-bottom:1.2rem;}
-.ps-balance{text-align:center;margin-bottom:1.2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);}
-.ps-bal-label{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem;}
-.ps-bal-btc{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--orange);}
-.ps-bal-usd{font-size:0.7rem;color:var(--muted);}
-.ps-change{display:inline-block;background:rgba(61,214,140,0.1);border:1px solid rgba(61,214,140,0.2);color:var(--green);font-size:0.6rem;padding:0.15rem 0.5rem;border-radius:50px;margin-top:0.3rem;}
-.ps-chart{height:50px;margin-bottom:1rem;border-radius:8px;overflow:hidden;}
-.ps-chart svg{width:100%;height:100%;}
-.ps-tx-label{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;}
-.ps-txs{display:flex;flex-direction:column;gap:0.4rem;}
-.ps-tx{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.03);border-radius:8px;padding:0.45rem 0.6rem;}
-.ps-tx-name{font-size:0.65rem;font-weight:500;}
-.ps-tx-date{font-size:0.56rem;color:var(--muted);}
-.ps-tx-sats{font-size:0.62rem;color:var(--orange);font-weight:600;}
-.ps-tx-usd{font-size:0.55rem;color:var(--muted);}
+.phone-status{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:0.65rem;color:var(--muted);margin-bottom:1.5rem;
+}
+.phone-balance{text-align:center;margin-bottom:1.5rem;}
+.phone-bal-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem;}
+.phone-bal-btc{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--orange);}
+.phone-bal-usd{font-size:0.75rem;color:var(--muted);margin-top:0.2rem;}
+.phone-change{
+  display:inline-block;
+  background:rgba(61,214,140,0.12);border:1px solid rgba(61,214,140,0.2);
+  color:#3DD68C;font-size:0.65rem;padding:0.2rem 0.6rem;border-radius:50px;margin-top:0.4rem;
+}
 
-/* PROBLEM SECTION */
-.problem-section{
-  padding:5rem 5%;
-  background:rgba(255,255,255,0.01);
-  border-top:1px solid var(--border);
+/* Mini chart */
+.mini-chart{
+  height:60px;margin-bottom:1.2rem;
+  background:rgba(91,141,239,0.04);
+  border-radius:10px;overflow:hidden;position:relative;
 }
-.section-inner{max-width:900px;margin:0 auto;text-align:center;}
-.eyebrow{font-size:0.72rem;color:var(--blue);text-transform:uppercase;letter-spacing:0.18em;font-weight:700;margin-bottom:0.8rem;}
-h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:1rem;}
-.section-sub{color:var(--muted);line-height:1.75;font-size:0.95rem;max-width:520px;margin:0 auto 3rem;}
+.mini-chart svg{width:100%;height:100%;}
 
-.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
-.pain-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:16px;padding:1.5rem;text-align:left;
+.phone-txs{display:flex;flex-direction:column;gap:0.5rem;}
+.phone-tx{
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(255,255,255,0.04);border-radius:10px;
+  padding:0.5rem 0.7rem;
 }
-.pain-emoji{font-size:1.5rem;margin-bottom:0.8rem;}
-.pain-card h3{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;margin-bottom:0.4rem;}
-.pain-card p{font-size:0.82rem;color:var(--muted);line-height:1.6;}
+.phone-tx-left{font-size:0.7rem;}
+.phone-tx-name{font-weight:500;color:var(--text);}
+.phone-tx-date{color:var(--muted);font-size:0.62rem;}
+.phone-tx-right{text-align:right;}
+.phone-tx-sats{font-size:0.68rem;color:var(--orange);font-weight:600;}
+.phone-tx-usd{font-size:0.6rem;color:var(--muted);}
+
+/* Floating badges around phone */
+.float-badge{
+  position:absolute;
+  background:rgba(14,14,28,0.95);
+  border:1px solid var(--border);
+  border-radius:14px;padding:0.6rem 0.9rem;
+  font-size:0.75rem;white-space:nowrap;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  backdrop-filter:blur(10px);
+}
+.fb1{left:-130px;top:30%;animation:floatBadge 4s ease-in-out infinite;}
+.fb2{right:-120px;top:50%;animation:floatBadge 4s 2s ease-in-out infinite;}
+@keyframes floatBadge{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.fb-val{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;}
+.fb-label{color:var(--muted);font-size:0.65rem;}
+
+/* SECTION COMMONS */
+section{padding:6rem 5%;position:relative;z-index:1;}
+.section-wrap{max-width:1100px;margin:0 auto;}
+.eyebrow{
+  font-size:0.72rem;color:var(--blue);
+  text-transform:uppercase;letter-spacing:0.18em;font-weight:600;
+  margin-bottom:0.8rem;
+}
+h2{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,4vw,3rem);font-weight:800;
+  line-height:1.1;margin-bottom:1rem;
+}
+h2 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sec-sub{color:var(--muted);max-width:480px;line-height:1.7;font-size:0.95rem;margin-bottom:3rem;}
 
 /* HOW IT WORKS */
-.how-section{padding:5rem 5%;}
-.steps{display:flex;flex-direction:column;gap:0;margin-top:2.5rem;max-width:650px;margin-left:auto;margin-right:auto;}
-.step-item{
-  display:flex;gap:1.5rem;padding-bottom:2.5rem;
+.how-section{background:rgba(255,255,255,0.01);}
+.steps-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--border);border-radius:20px;overflow:hidden;
+}
+.step{
+  background:var(--dark);padding:2.2rem 1.8rem;
   position:relative;
+  transition:background 0.2s;
 }
-.step-item::after{
-  content:'';position:absolute;left:19px;top:42px;bottom:0;
-  width:2px;background:linear-gradient(to bottom,rgba(91,141,239,0.3),transparent);
+.step:hover{background:rgba(91,141,239,0.05);}
+.step-num{
+  font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;margin-bottom:1rem;
 }
-.step-item:last-child::after{display:none;}
-.step-circle{
-  width:40px;height:40px;border-radius:50%;
+.step h3{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.5rem;}
+.step p{font-size:0.85rem;color:var(--muted);line-height:1.65;}
+
+/* FEATURES */
+.feat-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;
+}
+.feat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:2rem;
+  transition:transform 0.2s,border-color 0.2s;
+  cursor:default;
+}
+.feat-card:hover{transform:translateY(-4px);border-color:rgba(91,141,239,0.25);}
+.feat-card.big{grid-row:span 2;}
+.feat-icon{
+  width:44px;height:44px;border-radius:12px;
   background:var(--grad);display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;
-  flex-shrink:0;position:relative;z-index:1;
+  font-size:1.2rem;margin-bottom:1.3rem;
 }
-.step-body h3{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.4rem;}
-.step-body p{font-size:0.88rem;color:var(--muted);line-height:1.65;}
-.step-example{
-  display:inline-flex;align-items:center;gap:0.5rem;
-  background:rgba(247,147,26,0.08);border:1px solid rgba(247,147,26,0.2);
-  border-radius:8px;padding:0.4rem 0.8rem;margin-top:0.6rem;
-  font-size:0.78rem;color:var(--orange);
-}
+.feat-card h3{font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.5rem;}
+.feat-card p{font-size:0.88rem;color:var(--muted);line-height:1.65;}
 
-/* BENEFITS */
-.benefits-section{
-  padding:5rem 5%;
-  background:rgba(255,255,255,0.01);
-  border-top:1px solid var(--border);
-}
-.benefits-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin-top:2.5rem;}
-.benefit-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:18px;padding:1.8rem;
-  transition:border-color 0.2s,transform 0.2s;
-}
-.benefit-card:hover{border-color:rgba(91,141,239,0.3);transform:translateY(-3px);}
-.benefit-icon{
-  width:42px;height:42px;border-radius:12px;background:var(--grad);
-  display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:1rem;
-}
-.benefit-card h3{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.4rem;}
-.benefit-card p{font-size:0.83rem;color:var(--muted);line-height:1.65;}
-
-/* VS SECTION */
-.vs-section{padding:5rem 5%;}
-.vs-table{
-  max-width:700px;margin:2.5rem auto 0;
-  background:var(--card);border:1px solid var(--border);border-radius:18px;
-  overflow:hidden;
-}
-.vs-row{
-  display:grid;grid-template-columns:2fr 1fr 1fr;
-  padding:1rem 1.5rem;border-bottom:1px solid var(--border);
-  align-items:center;font-size:0.85rem;
-}
-.vs-row:last-child{border-bottom:none;}
-.vs-header{background:rgba(255,255,255,0.03);font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;}
-.vs-col-head{text-align:center;}
-.vs-col-head.ours{color:var(--blue);}
-.check{color:var(--green);text-align:center;font-size:1rem;}
-.cross{color:#FF5B6B;text-align:center;font-size:1rem;}
-.vs-feature{color:var(--text);}
-
-/* TESTIMONIALS */
-.testimonials-section{
-  padding:5rem 5%;
-  background:rgba(255,255,255,0.01);
-  border-top:1px solid var(--border);
-}
-.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.5rem;}
-.review-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:16px;padding:1.5rem;
-}
-.stars{color:var(--orange);font-size:0.85rem;letter-spacing:2px;margin-bottom:0.8rem;}
-.review-text{font-size:0.85rem;color:var(--text);line-height:1.7;margin-bottom:1rem;font-style:italic;}
-.reviewer{display:flex;align-items:center;gap:0.7rem;}
-.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;flex-shrink:0;}
-.reviewer-name{font-size:0.82rem;font-weight:600;}
-.reviewer-title{font-size:0.72rem;color:var(--muted);}
-
-/* MATH SECTION */
-.math-section{padding:5rem 5%;}
-.math-box{
-  max-width:600px;margin:2.5rem auto 0;
+/* MULTIPLIER DEMO */
+.mult-demo{
   background:rgba(91,141,239,0.05);
   border:1px solid rgba(91,141,239,0.15);
-  border-radius:20px;padding:2rem;
+  border-radius:14px;margin-top:1.5rem;padding:1.2rem;
 }
-.math-row{display:flex;justify-content:space-between;align-items:center;padding:0.8rem 0;border-bottom:1px solid var(--border);font-size:0.88rem;}
-.math-row:last-child{border-bottom:none;padding-top:1rem;}
-.math-label{color:var(--muted);}
-.math-val{font-family:'Syne',sans-serif;font-weight:700;}
-.math-val.big{font-size:1.3rem;color:var(--orange);}
-.math-note{font-size:0.75rem;color:var(--muted);text-align:center;margin-top:1rem;}
+.mult-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.8rem;}
+.mult-row{display:flex;gap:0.5rem;margin-bottom:0.8rem;}
+.mult-btn{
+  flex:1;padding:0.5rem;border-radius:10px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-family:'Syne',sans-serif;
+  font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.15s;
+}
+.mult-btn.active{background:var(--grad);color:white;border-color:transparent;}
+.mult-result{
+  font-size:0.85rem;color:var(--text);
+  padding:0.7rem;background:rgba(255,255,255,0.04);border-radius:8px;
+}
+.mult-btc{color:var(--orange);font-weight:600;}
+
+/* SOCIAL PROOF */
+.trust-bar{
+  display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap;
+  padding:3rem 5%;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,0.01);
+}
+.trust-item{text-align:center;}
+.trust-num{
+  font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.trust-label{font-size:0.8rem;color:var(--muted);margin-top:0.2rem;}
+
+/* TESTIMONIALS */
+.reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
+.review{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;padding:1.8rem;
+}
+.stars{color:var(--orange);font-size:0.85rem;margin-bottom:1rem;letter-spacing:2px;}
+.review-text{font-size:0.9rem;color:var(--text);line-height:1.7;margin-bottom:1.2rem;font-style:italic;}
+.reviewer{display:flex;align-items:center;gap:0.8rem;}
+.avatar{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;font-weight:700;
+}
+.reviewer-name{font-size:0.85rem;font-weight:600;}
+.reviewer-title{font-size:0.75rem;color:var(--muted);}
 
 /* PRICING */
-.pricing-section{
-  padding:5rem 5%;
-  background:rgba(255,255,255,0.01);
-  border-top:1px solid var(--border);
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:700px;margin:0 auto;}
+.price-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:2rem;text-align:center;
+  transition:transform 0.2s;
 }
-.price-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;max-width:620px;margin:2.5rem auto 0;}
-.price-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:1.8rem;text-align:center;position:relative;}
-.price-card.featured{border-color:rgba(91,141,239,0.4);background:rgba(91,141,239,0.05);}
-.popular-tag{
+.price-card.featured{
+  border-color:rgba(91,141,239,0.4);
+  background:rgba(91,141,239,0.06);
+  position:relative;
+}
+.price-card:hover{transform:translateY(-4px);}
+.price-badge{
   position:absolute;top:-12px;left:50%;transform:translateX(-50%);
   background:var(--grad);color:white;
-  padding:0.2rem 1rem;border-radius:50px;font-size:0.7rem;font-weight:700;white-space:nowrap;
+  padding:0.2rem 1rem;border-radius:50px;font-size:0.72rem;font-weight:600;
+  white-space:nowrap;
 }
-.plan-name{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;}
-.plan-price{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;line-height:1;margin-bottom:0.2rem;}
-.plan-period{font-size:0.78rem;color:var(--muted);margin-bottom:1.5rem;}
-.plan-features{list-style:none;text-align:left;display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;}
-.plan-features li{font-size:0.82rem;color:var(--muted);display:flex;gap:0.5rem;align-items:flex-start;line-height:1.5;}
-.plan-features li::before{content:'\u2713';color:var(--green);flex-shrink:0;font-weight:700;}
-.plan-btn{
-  width:100%;padding:0.75rem;border-radius:50px;border:none;cursor:pointer;
-  font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;transition:all 0.2s;
+.price-name{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;}
+.price-amount{
+  font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;
+  line-height:1;margin-bottom:0.3rem;
 }
-.plan-btn-primary{background:var(--grad);color:white;box-shadow:0 4px 16px rgba(107,63,212,0.3);}
-.plan-btn-secondary{background:rgba(255,255,255,0.06);color:var(--text);border:1px solid var(--border);}
+.price-period{font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;}
+.price-features{list-style:none;text-align:left;display:flex;flex-direction:column;gap:0.6rem;margin-bottom:2rem;}
+.price-features li{font-size:0.85rem;color:var(--muted);display:flex;gap:0.6rem;align-items:flex-start;}
+.price-features li::before{content:'✓';color:#3DD68C;flex-shrink:0;font-weight:700;}
+.price-cta{
+  width:100%;padding:0.8rem;border-radius:50px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;
+  transition:all 0.2s;
+}
+.price-cta-primary{background:var(--grad);color:white;box-shadow:0 4px 20px rgba(107,63,212,0.35);}
+.price-cta-primary:hover{box-shadow:0 8px 30px rgba(107,63,212,0.5);}
+.price-cta-secondary{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);}
+.price-cta-secondary:hover{background:rgba(255,255,255,0.1);}
 
-/* FAQ */
-.faq-section{padding:5rem 5%;}
-.faqs{max-width:650px;margin:2.5rem auto 0;display:flex;flex-direction:column;gap:0.8rem;}
-.faq-item{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:14px;overflow:hidden;cursor:pointer;
-}
-.faq-q{
-  padding:1.1rem 1.3rem;display:flex;justify-content:space-between;align-items:center;
-  font-family:'Syne',sans-serif;font-weight:600;font-size:0.9rem;
-}
-.faq-icon{color:var(--blue);font-size:1.2rem;transition:transform 0.2s;flex-shrink:0;}
-.faq-a{
-  max-height:0;overflow:hidden;transition:max-height 0.3s ease;
-  font-size:0.85rem;color:var(--muted);line-height:1.7;
-}
-.faq-a.open{max-height:200px;}
-.faq-a-inner{padding:0 1.3rem 1.1rem;}
-
-/* FINAL CTA */
-.final-cta{
-  padding:6rem 5%;text-align:center;
+/* CTA SECTION */
+.cta-section{
+  text-align:center;padding:7rem 5%;
   background:radial-gradient(ellipse at 50% 100%,rgba(107,63,212,0.2) 0%,transparent 65%);
-  border-top:1px solid var(--border);
 }
-.final-cta h2{max-width:550px;margin:0 auto 0.8rem;font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:800;}
-.final-cta p{color:var(--muted);margin-bottom:2rem;font-size:0.95rem;}
-.final-form{
-  display:flex;flex-direction:column;gap:0.8rem;
-  max-width:380px;margin:0 auto;
+.cta-section h2{max-width:650px;margin:0 auto 1.2rem;}
+.cta-section p{color:var(--muted);margin-bottom:2.5rem;font-size:1rem;}
+.waitlist-form{
+  display:flex;gap:0.8rem;max-width:460px;margin:0 auto;
+  background:rgba(255,255,255,0.05);border:1px solid var(--border);
+  border-radius:50px;padding:0.4rem 0.4rem 0.4rem 1.5rem;
 }
-.final-form input{
-  background:rgba(255,255,255,0.06);border:1px solid var(--border);
-  border-radius:12px;padding:0.9rem 1.2rem;
-  color:white;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;
+.waitlist-form input{
+  flex:1;background:none;border:none;outline:none;
+  color:white;font-family:'DM Sans',sans-serif;font-size:0.9rem;
 }
-.final-form input::placeholder{color:var(--muted);}
-.final-form button{
+.waitlist-form input::placeholder{color:var(--muted);}
+.waitlist-form button{
   background:var(--grad);color:white;border:none;
-  padding:0.9rem;border-radius:12px;cursor:pointer;
-  font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;
-  box-shadow:0 8px 24px rgba(107,63,212,0.4);transition:transform 0.2s;
+  padding:0.7rem 1.5rem;border-radius:50px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;
+  white-space:nowrap;transition:opacity 0.2s;
 }
-.final-form button:hover{transform:translateY(-2px);}
-.final-success{display:none;color:var(--green);font-size:0.9rem;padding:1rem;background:rgba(61,214,140,0.08);border:1px solid rgba(61,214,140,0.2);border-radius:12px;}
-.disclaimer{font-size:0.72rem;color:var(--muted);margin-top:1.5rem;}
+.waitlist-form button:hover{opacity:0.85;}
+.success-msg{
+  display:none;
+  background:rgba(61,214,140,0.1);border:1px solid rgba(61,214,140,0.25);
+  color:#3DD68C;padding:1rem 2rem;border-radius:50px;
+  font-size:0.9rem;margin-top:1rem;
+}
 
 /* FOOTER */
 footer{
-  padding:2rem 5%;
   border-top:1px solid var(--border);
-  display:flex;flex-wrap:wrap;gap:1rem;
-  align-items:center;justify-content:space-between;
+  padding:2.5rem 5%;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;
 }
-.footer-links{display:flex;gap:1.5rem;flex-wrap:wrap;}
-.footer-links a{color:var(--muted);text-decoration:none;font-size:0.8rem;}
-footer p{font-size:0.75rem;color:var(--muted);}
+.footer-links{display:flex;gap:2rem;flex-wrap:wrap;}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:0.85rem;transition:color 0.2s;}
+.footer-links a:hover{color:white;}
+footer p{font-size:0.8rem;color:var(--muted);}
 
-/* MOBILE */
-@media(max-width:640px){
+/* RESPONSIVE */
+@media(max-width:900px){
+  .nav-links{display:none;}
+  .steps-row{grid-template-columns:1fr 1fr;}
+  .feat-grid{grid-template-columns:1fr;}
+  .feat-card.big{grid-row:auto;}
+  .reviews{grid-template-columns:1fr;}
+  .price-grid{grid-template-columns:1fr;}
+  .fb1,.fb2{display:none;}
+}
+@media(max-width:600px){
   nav{padding:0.9rem 4%;}
-  .hero{padding:5.5rem 4% 3rem;}
-  h1{font-size:2.3rem;}
-  .hero-form{flex-direction:column;border-radius:14px;padding:0.6rem;gap:0.5rem;border-radius:16px;}
-  .hero-form input{padding:0.6rem 0.8rem;}
-  .hero-form button{border-radius:10px;padding:0.8rem;}
-  .pain-grid{grid-template-columns:1fr;}
-  .benefits-grid{grid-template-columns:1fr;}
-  .reviews-grid{grid-template-columns:1fr;}
-  .price-cards{grid-template-columns:1fr;max-width:100%;}
-  .phone{width:85%;max-width:280px;}
-  .vs-row{font-size:0.78rem;padding:0.8rem 1rem;}
-  footer{flex-direction:column;align-items:flex-start;}
+  .nav-logo{font-size:1.1rem;}
+  .hex{width:28px;height:28px;font-size:0.7rem;}
+  .btn-ghost{display:none;}
+  .btn-pill{padding:0.5rem 1rem;font-size:0.8rem;}
+  .hero{padding:5rem 4% 3rem;}
+  h1{font-size:2.6rem;letter-spacing:-0.01em;}
+  .hero-sub{font-size:0.95rem;margin:1.2rem auto 2rem;}
+  .hero-actions{flex-direction:column;align-items:center;width:100%;}
+  .btn-big{width:100%;text-align:center;padding:0.9rem 1.5rem;}
+  .phone-wrap{width:100%;display:flex;justify-content:center;}
+  .phone{width:88%;max-width:300px;}
+  .phone-screen{padding:1.2rem 1rem;}
+  .trust-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:2rem 4%;}
+  .trust-num{font-size:1.1rem;white-space:nowrap;}
+  .trust-label{font-size:0.65rem;}
+  .steps-row{grid-template-columns:1fr;}
+  section{padding:4rem 4%;}
+  h2{font-size:1.8rem;}
+  .feat-grid{grid-template-columns:1fr;}
+  .feat-card{padding:1.5rem;}
+  .reviews{grid-template-columns:1fr;}
+  .price-grid{grid-template-columns:1fr;max-width:100%;}
+  .price-card{padding:1.5rem;}
+  .cta-section{padding:4rem 4%;}
+  .waitlist-form{flex-direction:column;border-radius:16px;padding:0.8rem;gap:0.6rem;}
+  .waitlist-form input{padding:0.5rem 0.5rem;}
+  .waitlist-form button{border-radius:10px;padding:0.8rem;}
+  footer{flex-direction:column;align-items:flex-start;padding:2rem 4%;}
   .footer-links{gap:1rem;}
 }
 </style>
@@ -374,288 +470,344 @@ footer p{font-size:0.75rem;color:var(--muted);}
 
 <!-- NAV -->
 <nav>
-  <a class="logo" href="#">
-    <div class="hex">\u20bf</div>
+  <a class="nav-logo" href="#">
+    <div class="hex">₿</div>
     BitCollect
   </a>
-  <button class="nav-cta" onclick="document.getElementById('final-cta').scrollIntoView({behavior:'smooth'})">Join Waitlist</button>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-ghost">Log In</button>
+    <button class="btn-pill">Get Early Access</button>
+  </div>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
   <div class="hero-inner">
-    <div class="hero-badge"><span class="badge-dot"></span> &nbsp;Now accepting early signups \u2014 limited spots</div>
-    <h1>Your Spare Change.<br/><span class="grad-text">Growing Into Bitcoin.</span></h1>
-    <p class="hero-sub">Every time you buy a coffee, fill up gas, or order dinner \u2014 BitCollect automatically rounds up the change and converts it into real Bitcoin. You don't do anything. It just happens.</p>
-    <div class="hero-form" id="heroForm">
-      <input type="email" id="heroEmail" placeholder="Enter your email address"/>
-      <button onclick="submitHero()">Get Early Access \u2192</button>
+    <div class="badge"><span class="badge-dot"></span> Now accepting waitlist signups</div>
+
+    <h1>
+      Every Purchase.<br/>
+      <span class="h1-line2">Stacking Bitcoin.</span>
+    </h1>
+    <p class="hero-sub">
+      BitCollect rounds up your everyday card purchases to the nearest dollar and automatically converts your spare change into Bitcoin. Set it once, stack forever.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-big btn-big-primary" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join the Waitlist →</button>
+      <button class="btn-big btn-big-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>
     </div>
-    <div class="success-msg" id="heroSuccess">\ud83c\udf89 You're on the list! We'll be in touch soon.</div>
-    <p class="hero-microcopy">Free to join. No credit card needed. Unsubscribe anytime.</p>
+
+    <!-- PHONE -->
+    <div class="phone-wrap">
+      <div class="float-badge fb1">
+        <div class="fb-val" style="color:#3DD68C;">+2,847 sats</div>
+        <div class="fb-label">Stacked today ⚡</div>
+      </div>
+      <div class="float-badge fb2">
+        <div class="fb-val" style="color:#F7931A;">0.00847 ₿</div>
+        <div class="fb-label">Your balance</div>
+      </div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-status">
+            <span>9:41</span>
+            <span>●●● 100%</span>
+          </div>
+          <div class="phone-balance">
+            <div class="phone-bal-label">Total Bitcoin</div>
+            <div class="phone-bal-btc">0.00847 ₿</div>
+            <div class="phone-bal-usd">$847.23 USD</div>
+            <div class="phone-change">↑ +12.4% this month</div>
+          </div>
+          <div class="mini-chart">
+            <svg viewBox="0 0 260 60" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#5B8DEF" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#5B8DEF" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,55 L30,48 L60,42 L90,38 L120,30 L150,25 L180,18 L210,12 L240,8 L260,5 L260,60 L0,60Z" fill="url(#cg)"/>
+              <path d="M0,55 L30,48 L60,42 L90,38 L120,30 L150,25 L180,18 L210,12 L240,8 L260,5" fill="none" stroke="#5B8DEF" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="phone-txs">
+            <div class="phone-tx">
+              <div class="phone-tx-left">
+                <div class="phone-tx-name">☕ Starbucks</div>
+                <div class="phone-tx-date">Today</div>
+              </div>
+              <div class="phone-tx-right">
+                <div class="phone-tx-sats">+614 sats</div>
+                <div class="phone-tx-usd">$0.63 → ₿</div>
+              </div>
+            </div>
+            <div class="phone-tx">
+              <div class="phone-tx-left">
+                <div class="phone-tx-name">🛒 Whole Foods</div>
+                <div class="phone-tx-date">Yesterday</div>
+              </div>
+              <div class="phone-tx-right">
+                <div class="phone-tx-sats">+857 sats</div>
+                <div class="phone-tx-usd">$0.88 → ₿</div>
+              </div>
+            </div>
+            <div class="phone-tx">
+              <div class="phone-tx-left">
+                <div class="phone-tx-name">⛽ Shell Gas</div>
+                <div class="phone-tx-date">Feb 25</div>
+              </div>
+              <div class="phone-tx-right">
+                <div class="phone-tx-sats">+572 sats</div>
+                <div class="phone-tx-usd">$0.59 → ₿</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- PROOF BAR -->
-<div class="proof-bar">
-  <p>Trusted bank connection via <strong>Plaid</strong> \u00b7 Bitcoin purchased through <strong>Coinbase</strong> \u00b7 <strong>256-bit</strong> encryption \u00b7 Your Bitcoin, <strong>your keys</strong></p>
-</div>
-
-<!-- PHONE MOCKUP -->
-<div class="phone-section">
-  <div class="phone-section-text">
-    <div class="eyebrow">See It In Action</div>
-    <h2>Watch your Bitcoin <span class="grad-text">grow automatically</span></h2>
-    <p>This is what your BitCollect dashboard looks like. Every purchase you make shows up as sats \u2014 the smallest unit of Bitcoin. Small amounts add up to real money over time.</p>
-  </div>
-  <div class="phone">
-    <div class="phone-screen">
-      <div class="ps-bar"><span>9:41</span><span>\u25cf\u25cf\u25cf 100%</span></div>
-      <div class="ps-balance">
-        <div class="ps-bal-label">Your Bitcoin Stack</div>
-        <div class="ps-bal-btc">0.00847 \u20bf</div>
-        <div class="ps-bal-usd">$847.23 USD</div>
-        <div class="ps-change">\u2191 +$94.20 this month</div>
-      </div>
-      <div class="ps-chart">
-        <svg viewBox="0 0 260 50" preserveAspectRatio="none">
-          <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5B8DEF" stop-opacity="0.3"/><stop offset="100%" stop-color="#5B8DEF" stop-opacity="0"/></linearGradient></defs>
-          <path d="M0,45 L40,40 L80,32 L120,25 L160,16 L200,10 L240,5 L260,3 L260,50 L0,50Z" fill="url(#cg)"/>
-          <path d="M0,45 L40,40 L80,32 L120,25 L160,16 L200,10 L240,5 L260,3" fill="none" stroke="#5B8DEF" stroke-width="2"/>
-        </svg>
-      </div>
-      <div class="ps-tx-label">Recent Round-Ups</div>
-      <div class="ps-txs">
-        <div class="ps-tx">
-          <div><div class="ps-tx-name">\u2615 Starbucks $4.37</div><div class="ps-tx-date">Today 8:42 AM</div></div>
-          <div style="text-align:right"><div class="ps-tx-sats">+614 sats</div><div class="ps-tx-usd">$0.63 \u2192 \u20bf</div></div>
-        </div>
-        <div class="ps-tx">
-          <div><div class="ps-tx-name">\ud83d\uded2 Whole Foods $67.12</div><div class="ps-tx-date">Yesterday</div></div>
-          <div style="text-align:right"><div class="ps-tx-sats">+857 sats</div><div class="ps-tx-usd">$0.88 \u2192 \u20bf</div></div>
-        </div>
-        <div class="ps-tx">
-          <div><div class="ps-tx-name">\u26fd Shell Gas $52.41</div><div class="ps-tx-date">Feb 25</div></div>
-          <div style="text-align:right"><div class="ps-tx-sats">+572 sats</div><div class="ps-tx-usd">$0.59 \u2192 \u20bf</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PROBLEM SECTION -->
-<div class="problem-section">
-  <div class="section-inner">
-    <div class="eyebrow">Sound Familiar?</div>
-    <h2>Most people <span class="grad-text">want Bitcoin</span> but never buy it</h2>
-    <p class="section-sub">We get it. The barriers are real. BitCollect was built specifically to remove every single one of them.</p>
-    <div class="pain-grid">
-      <div class="pain-card">
-        <div class="pain-emoji">\ud83d\ude30</div>
-        <h3>"I don't know when to buy"</h3>
-        <p>Timing the market is stressful and usually leads to buying high and selling low. BitCollect buys a little every single day \u2014 no timing needed.</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-emoji">\ud83d\udcb8</div>
-        <h3>"I don't have money to invest"</h3>
-        <p>You don't need extra money. Your round-ups come from money you're already spending. You'll never even feel it leave.</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-emoji">\ud83e\udd2f</div>
-        <h3>"Crypto apps are too confusing"</h3>
-        <p>No wallets to set up. No exchange accounts. No charts to read. BitCollect does everything automatically in the background.</p>
-      </div>
-    </div>
-  </div>
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item"><div class="trust-num">$0</div><div class="trust-label">To get started</div></div>
+  <div class="trust-item"><div class="trust-num">2 min</div><div class="trust-label">Setup time</div></div>
+  <div class="trust-item"><div class="trust-num">256-bit</div><div class="trust-label">Bank encryption</div></div>
+  <div class="trust-item"><div class="trust-num">1.5%</div><div class="trust-label">Only fee, ever</div></div>
+  <div class="trust-item"><div class="trust-num">Your keys</div><div class="trust-label">Self-custody option</div></div>
 </div>
 
 <!-- HOW IT WORKS -->
-<div class="how-section">
-  <div class="section-inner">
+<section id="how" class="how-section">
+  <div class="section-wrap">
     <div class="eyebrow">How It Works</div>
-    <h2>Up and running in <span class="grad-text">under 2 minutes</span></h2>
-    <p class="section-sub">Four steps. Then forget about it. BitCollect runs silently in the background while you live your life.</p>
-  </div>
-  <div class="steps">
-    <div class="step-item">
-      <div class="step-circle">1</div>
-      <div class="step-body">
-        <h3>Create your free account</h3>
-        <p>Sign up with your email. No credit card, no minimum balance, no commitment. Takes 60 seconds.</p>
+    <h2>Simple as <em>spending money</em></h2>
+    <p class="sec-sub">You don't change anything about how you spend. BitCollect works silently in the background.</p>
+    <div class="steps-row">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Connect Your Card</h3>
+        <p>Securely link your debit or credit card in under 2 minutes using bank-grade encryption. We use Plaid — trusted by millions.</p>
       </div>
-    </div>
-    <div class="step-item">
-      <div class="step-circle">2</div>
-      <div class="step-body">
-        <h3>Securely connect your bank or card</h3>
-        <p>We use Plaid \u2014 the same technology trusted by Venmo, Cash App, and millions of apps. We can only READ your transactions. We never touch your bank balance.</p>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Spend as Normal</h3>
+        <p>Buy your coffee, groceries, gas — whatever you already buy. There's nothing new to do. Just live your life.</p>
       </div>
-    </div>
-    <div class="step-item">
-      <div class="step-circle">3</div>
-      <div class="step-body">
-        <h3>Spend money like you normally do</h3>
-        <p>That's literally it. Buy your groceries, coffee, gas \u2014 whatever you already buy. BitCollect watches in the background.</p>
-        <div class="step-example">\u2615 You spend $4.37 \u2192 BitCollect rounds up $0.63</div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>We Round Up</h3>
+        <p>Every purchase is rounded up to the nearest dollar. Spent $4.37? We collect $0.63 and queue it up for Bitcoin.</p>
       </div>
-    </div>
-    <div class="step-item">
-      <div class="step-circle">4</div>
-      <div class="step-body">
-        <h3>Wake up to more Bitcoin every morning</h3>
-        <p>Every night at midnight, BitCollect pools your round-ups and buys real Bitcoin on your behalf. You get a notification. Your stack grows. Repeat forever.</p>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Bitcoin Lands in Your Account</h3>
+        <p>Once a day we convert all your round-ups into real Bitcoin. Watch your stack grow every morning when you wake up.</p>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- BENEFITS -->
-<div class="benefits-section">
-  <div class="section-inner">
-    <div class="eyebrow">Why BitCollect</div>
-    <h2>Built different. <span class="grad-text">Built for you.</span></h2>
-    <p class="section-sub">Not for Wall Street. Not for crypto traders. Built for regular people who want to own Bitcoin without the headache.</p>
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-wrap">
+    <div class="eyebrow">Features</div>
+    <h2>Built for <em>real people</em></h2>
+    <p class="sec-sub">Not for traders. Not for tech bros. For anyone who wants to own Bitcoin without thinking about it.</p>
+    <div class="feat-grid">
+      <div class="feat-card big">
+        <div class="feat-icon">🎯</div>
+        <h3>Round-Up Multiplier</h3>
+        <p>Don't want to wait? Stack 2x or 3x faster with our multiplier. Your $0.63 round-up becomes $1.26 or $1.89 in Bitcoin.</p>
+        <div class="mult-demo">
+          <div class="mult-label">Try it — pick your multiplier</div>
+          <div class="mult-row">
+            <button class="mult-btn active" onclick="setMult(1,this)">1x</button>
+            <button class="mult-btn" onclick="setMult(2,this)">2x</button>
+            <button class="mult-btn" onclick="setMult(3,this)">3x</button>
+          </div>
+          <div class="mult-result" id="multResult">
+            ☕ $4.37 coffee → <span class="mult-btc">$0.63 in Bitcoin</span> per purchase
+          </div>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <h3>Bank-Grade Security</h3>
+        <p>Read-only access to your transactions via Plaid. We never see your bank login. 256-bit encryption throughout.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📤</div>
+        <h3>Self-Custody Withdrawals</h3>
+        <p>Send your Bitcoin to your own wallet anytime. Your keys, your coins. No lock-ups, no minimums.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h3>Live Dashboard</h3>
+        <p>See your Bitcoin balance in real time, track every round-up, and watch your stack grow — in BTC or USD.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📱</div>
+        <h3>iOS & Android App</h3>
+        <p>Get push notifications every time you stack more sats. BitCollect is always in your pocket.</p>
+      </div>
+    </div>
   </div>
-  <div class="benefits-grid" style="max-width:800px;margin:2.5rem auto 0;">
-    <div class="benefit-card">
-      <div class="benefit-icon">\ud83d\udd12</div>
-      <h3>Read-Only Bank Access</h3>
-      <p>BitCollect can only see your transactions \u2014 never move money from your bank. Your account is 100% safe. We use Plaid, trusted by over 8,000 apps.</p>
-    </div>
-    <div class="benefit-card">
-      <div class="benefit-icon">\u20bf</div>
-      <h3>Real Bitcoin. Not a Token.</h3>
-      <p>You own actual Bitcoin \u2014 not a fund, not an ETF, not a "crypto token." Real BTC that you can withdraw to your own wallet whenever you want.</p>
-    </div>
-    <div class="benefit-card">
-      <div class="benefit-icon">\ud83d\udd11</div>
-      <h3>Self-Custody Option</h3>
-      <p>Want to move your Bitcoin to your own wallet? One tap. No fees. No minimums. Your keys, your coins. We believe in true Bitcoin ownership.</p>
-    </div>
-    <div class="benefit-card">
-      <div class="benefit-icon">\u26a1</div>
-      <h3>Stack Faster With Multipliers</h3>
-      <p>Want to grow your stack quicker? Turn on 2x or 3x multiplier. Your $0.63 round-up becomes $1.26 or $1.89. Still barely noticeable day to day.</p>
-    </div>
-    <div class="benefit-card">
-      <div class="benefit-icon">\ud83d\udcca</div>
-      <h3>Dollar Cost Averaging \u2014 Automatically</h3>
-      <p>Buying a little Bitcoin every day is the #1 recommended strategy by financial experts. BitCollect does this automatically without you thinking about it.</p>
-    </div>
-    <div class="benefit-card">
-      <div class="benefit-icon">\ud83d\udcb0</div>
-      <h3>Only 1.5% Fee. Nothing Hidden.</h3>
-      <p>We charge 1.5% when we buy Bitcoin for you. That's it. No monthly fee on the free plan. No withdrawal fees. No surprises. Ever.</p>
-    </div>
-  </div>
-</div>
-
-<!-- VS SECTION -->
-<div class="vs-section">
-  <div class="section-inner">
-    <div class="eyebrow">Compare</div>
-    <h2>BitCollect vs <span class="grad-text">the alternatives</span></h2>
-    <p class="section-sub">See why thousands of people are choosing BitCollect to start their Bitcoin journey.</p>
-  </div>
-  <div class="vs-table">
-    <div class="vs-row vs-header">
-      <div></div>
-      <div class="vs-col-head ours">BitCollect</div>
-      <div class="vs-col-head">Others</div>
-    </div>
-    <div class="vs-row"><div class="vs-feature">Automatic round-ups</div><div class="check">\u2713</div><div class="check">\u2713</div></div>
-    <div class="vs-row"><div class="vs-feature">Bitcoin only (not random crypto)</div><div class="check">\u2713</div><div class="cross">\u2717</div></div>
-    <div class="vs-row"><div class="vs-feature">Self-custody withdrawal</div><div class="check">\u2713</div><div class="cross">\u2717</div></div>
-    <div class="vs-row"><div class="vs-feature">No monthly subscription fee</div><div class="check">\u2713</div><div class="cross">\u2717</div></div>
-    <div class="vs-row"><div class="vs-feature">Round-up multipliers (2x, 3x)</div><div class="check">\u2713</div><div class="cross">\u2717</div></div>
-    <div class="vs-row"><div class="vs-feature">Lightning Network withdrawals</div><div class="check">\u2713</div><div class="cross">\u2717</div></div>
-    <div class="vs-row"><div class="vs-feature">Works with any bank or card</div><div class="check">\u2713</div><div class="check">\u2713</div></div>
-  </div>
-</div>
-
-<!-- MATH SECTION -->
-<div class="math-section">
-  <div class="section-inner">
-    <div class="eyebrow">Run The Numbers</div>
-    <h2>How much Bitcoin could <span class="grad-text">you stack?</span></h2>
-    <p class="section-sub">Based on the average American making 25 card purchases a month. Small amounts. Real results.</p>
-  </div>
-  <div class="math-box">
-    <div class="math-row"><div class="math-label">Average purchases per month</div><div class="math-val">25 transactions</div></div>
-    <div class="math-row"><div class="math-label">Average round-up per purchase</div><div class="math-val">~$0.50</div></div>
-    <div class="math-row"><div class="math-label">Monthly Bitcoin purchased</div><div class="math-val">~$12.50</div></div>
-    <div class="math-row"><div class="math-label">In 1 year (at today's prices)</div><div class="math-val">~$150 in Bitcoin</div></div>
-    <div class="math-row"><div class="math-label">In 3 years</div><div class="math-val big">~$450+ in Bitcoin</div></div>
-    <p class="math-note">*Based on current Bitcoin prices. Bitcoin value may increase or decrease. This is not financial advice.</p>
-  </div>
-</div>
+</section>
 
 <!-- TESTIMONIALS -->
-<div class="testimonials-section">
-  <div class="section-inner">
-    <div class="eyebrow">Real People. Real Results.</div>
-    <h2>They started with <span class="grad-text">spare change.</span></h2>
-    <p class="section-sub">From our closed beta users. Regular people who just wanted a simple way into Bitcoin.</p>
+<section>
+  <div class="section-wrap">
+    <div class="eyebrow">Early Users</div>
+    <h2>People <em>love it</em></h2>
+    <p class="sec-sub">From our closed beta. Real people, real Bitcoin — stacked one coffee at a time.</p>
+    <div class="reviews">
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"I've stacked more Bitcoin in 3 months with BitCollect than I did trying to time the market for 2 years. It just works."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(91,141,239,0.2);color:var(--blue);">M</div>
+          <div><div class="reviewer-name">Marcus T.</div><div class="reviewer-title">Teacher, Atlanta</div></div>
+        </div>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"I literally forget it's running. Then I open the app and I'm like... wait, I own that much Bitcoin now? Wild."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(247,147,26,0.15);color:var(--orange);">J</div>
+          <div><div class="reviewer-name">Jordan K.</div><div class="reviewer-title">Nurse, Houston</div></div>
+        </div>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"Finally a Bitcoin app that doesn't require a finance degree. My whole family uses it now."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(107,63,212,0.2);color:#9B6EF5;">A</div>
+          <div><div class="reviewer-name">Amara S.</div><div class="reviewer-title">Small business owner, Miami</div></div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="reviews-grid">
-    <div class="review-card">
-      <div class="stars">\u2605\u2605\u2605\u2605\u2605</div>
-      <p class="review-text">"I've tried buying Bitcoin on exchanges and always chickened out. With BitCollect I didn't even realize I was stacking until I checked my balance. I had $200 in Bitcoin without even trying."</p>
-      <div class="reviewer">
-        <div class="avatar" style="background:rgba(91,141,239,0.2);color:var(--blue);">M</div>
-        <div><div class="reviewer-name">Marcus T.</div><div class="reviewer-title">Teacher \u00b7 Atlanta, GA</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="stars">\u2605\u2605\u2605\u2605\u2605</div>
-      <p class="review-text">"My husband thought I was crazy when I told him I was buying Bitcoin with my coffee change. Six months later he downloaded it too. We now have over $800 combined. It's so easy it feels like cheating."</p>
-      <div class="reviewer">
-        <div class="avatar" style="background:rgba(247,147,26,0.15);color:var(--orange);">J</div>
-        <div><div class="reviewer-name">Jordan K.</div><div class="reviewer-title">Nurse \u00b7 Houston, TX</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="stars">\u2605\u2605\u2605\u2605\u2605</div>
-      <p class="review-text">"As a small business owner I put all my card spending through BitCollect. I'm buying Bitcoin every single day without thinking about it. Best financial decision I've made in years."</p>
-      <div class="reviewer">
-        <div class="avatar" style="background:rgba(107,63,212,0.2);color:#9B6EF5;">A</div>
-        <div><div class="reviewer-name">Amara S.</div><div class="reviewer-title">Business Owner \u00b7 Miami, FL</div></div>
-      </div>
-    </div>
-  </div>
-</div>
+</section>
 
 <!-- PRICING -->
-<div class="pricing-section">
-  <div class="section-inner">
+<section id="pricing">
+  <div class="section-wrap" style="text-align:center;">
     <div class="eyebrow">Pricing</div>
-    <h2>Start free. <span class="grad-text">Upgrade when ready.</span></h2>
-    <p class="section-sub">No tricks. No hidden fees. Cancel anytime. We only make money when you stack Bitcoin.</p>
-  </div>
-  <div class="price-cards">
-    <div class="price-card">
-      <div class="plan-name">Free</div>
-      <div class="plan-price">$0</div>
-      <div class="plan-period">forever, no credit card</div>
-      <ul class="plan-features">
-        <li>Automatic round-ups on all purchases</li>
-        <li>Daily Bitcoin purchases</li>
-        <li>Live balance dashboard</li>
-        <li>Withdraw to your wallet anytime</li>
-        <li>1.5% fee per Bitcoin purchase</li>
-      </ul>
-      <button class="plan-btn plan-btn-secondary" onclick="document.getElementById('final-cta').scrollIntoView({behavior:'smooth'})">Get Started Free</button>
+    <h2>Simple, <em>honest pricing</em></h2>
+    <p class="sec-sub" style="margin:0 auto 3rem;">No hidden fees. No ads. No selling your data. Ever.</p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-name">Free</div>
+        <div class="price-amount">$0</div>
+        <div class="price-period">forever</div>
+        <ul class="price-features">
+          <li>Round-up 1x on all purchases</li>
+          <li>Daily Bitcoin purchases</li>
+          <li>Live dashboard</li>
+          <li>1.5% fee per purchase</li>
+          <li>Withdraw anytime</li>
+        </ul>
+        <button class="price-cta price-cta-secondary" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get Started Free</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-name">Premium</div>
+        <div class="price-amount" style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">$3.99</div>
+        <div class="price-period">per month</div>
+        <ul class="price-features">
+          <li>Everything in Free</li>
+          <li>2x & 3x multipliers</li>
+          <li>Lightning Network withdrawals</li>
+          <li>Advanced analytics</li>
+          <li>Priority support</li>
+          <li>1% fee (lower than free!)</li>
+        </ul>
+        <button class="price-cta price-cta-primary" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Start Premium →</button>
+      </div>
     </div>
-    <div class="price-card featured">
-      <div class="popular-tag">Most Popular</div>
-      <div class="plan-name">Premium</div>
-      <div class="plan-price" style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">$3.99</div>
-      <div class="plan-period">per month \u00b7 cancel anytime</div>
-      <ul class="plan-features">
-        <li>Everything in Free</li>
-        <li>2x and 3x round-up multipliers</li>
-        <li>Lower 1% fee (saves money!)</li>
-        <li>Lightning Network withdrawals</li>
-        <li>Advanced
+  </div>
+</section>
+
+<!-- CTA / WAITLIST -->
+<div class="cta-section" id="waitlist">
+  <div class="eyebrow" style="justify-content:center;display:flex;">Early Access</div>
+  <h2>Start stacking <em>Bitcoin today</em></h2>
+  <p>Join thousands on the waitlist. Early users get locked-in lower fees for life.</p>
+  <div class="waitlist-form">
+    <input type="email" id="emailInput" placeholder="your@email.com"/>
+    <button onclick="submitWaitlist()">Join Waitlist</button>
+  </div>
+  <div class="success-msg" id="successMsg">
+    🎉 You're on the list! We'll email you when we launch.
+  </div>
+  <p style="font-size:0.75rem;color:var(--muted);margin-top:1.2rem;">No spam. Unsubscribe anytime. We hate spam too.</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a class="nav-logo" href="#" style="text-decoration:none;">
+    <div class="hex">₿</div>
+    BitCollect
+  </a>
+  <div class="footer-links">
+    <a href="#">How It Works</a>
+    <a href="#">Pricing</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Contact</a>
+  </div>
+  <p>© 2025 BitCollect LLC. Not financial advice. Bitcoin involves risk.</p>
+</footer>
+
+<script>
+// Multiplier demo
+function setMult(val, btn) {
+  document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const base = 0.63;
+  const result = (base * val).toFixed(2);
+  document.getElementById('multResult').innerHTML =
+    `☕ $4.37 coffee → <span class="mult-btc">$${result} in Bitcoin</span> per purchase`;
+}
+
+// Waitlist form
+function submitWaitlist() {
+  const email = document.getElementById('emailInput').value;
+  if (!email || !email.includes('@')) {
+    document.getElementById('emailInput').style.borderBottom = '2px solid #FF5B6B';
+    return;
+  }
+  document.querySelector('.waitlist-form').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+}
+
+// Scroll-triggered animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.step, .feat-card, .review, .price-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
